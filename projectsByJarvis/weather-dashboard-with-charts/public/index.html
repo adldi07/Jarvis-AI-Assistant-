@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern and responsive weather dashboard.">
+    <meta name="keywords" content="weather, dashboard, forecast, temperature, humidity, wind, location, geolocation">
+    <meta name="author" content="Your Name">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <header>
+        <h1 aria-label="Weather Dashboard">Weather Dashboard</h1>
+        <div class="search-container">
+            <input type="text" id="location-search" placeholder="Enter location..." aria-label="Search for a location">
+            <button id="search-button" aria-label="Search">Search</button>
+            <button id="geolocation-button" aria-label="Use my current location">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                    <path d="M12.166 8.94c-.524 1.062-1.53 2.265-3.184 3.692l-.04.036-.04-.036c-1.654-1.427-2.66-2.63-3.184-3.692C2.74 6.177 0 4.287 0 2.098a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 .5.5c0 2.189-2.74 4.078-5.834 6.842zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="units-selector">
+            <label for="units">Units:</label>
+            <select id="units" name="units" aria-label="Select units">
+                <option value="metric">Celsius (°C), m/s</option>
+                <option value="imperial">Fahrenheit (°F), mph</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <section id="current-weather" aria-labelledby="current-weather-heading">
+            <h2 id="current-weather-heading">Current Weather</h2>
+            <div class="weather-container">
+                <div class="location-info">
+                    <h3 id="location-name" aria-live="polite"></h3>
+                    <p id="current-date"></p>
+                </div>
+                <div class="temperature-info">
+                    <img id="weather-icon" src="" alt="Weather icon" aria-hidden="true">
+                    <p id="temperature"></p>
+                    <p id="weather-description"></p>
+                </div>
+                <div class="details">
+                    <p id="humidity"></p>
+                    <p id="wind-speed"></p>
+                    <p id="pressure"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="forecast" aria-labelledby="forecast-heading">
+            <h2 id="forecast-heading">5-Day Forecast</h2>
+            <div class="forecast-container">
+                <!-- Forecast cards will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="hourly-forecast" aria-labelledby="hourly-forecast-heading">
+            <h2 id="hourly-forecast-heading">24-Hour Forecast</h2>
+            <div class="hourly-forecast-container">
+                <!-- Hourly forecast items will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="historical-data" aria-labelledby="historical-data-heading">
+            <h2 id="historical-data-heading">Historical Data</h2>
+            <div class="chart-container">
+                <canvas id="temperature-chart" role="img" aria-label="Temperature chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="humidity-chart" role="img" aria-label="Humidity chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="wind-speed-chart" role="img" aria-label="Wind speed chart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Weather Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

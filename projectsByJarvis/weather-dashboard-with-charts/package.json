@@ -1,0 +1,38 @@
+{
+  "name": "weather-dashboard-with-charts",
+  "version": "1.0.0",
+  "description": "A modern and responsive weather dashboard displaying current weather conditions, forecasts, and historical data visualized in interactive charts.",
+  "main": "index.html",
+  "scripts": {
+    "start": "open index.html",
+    "dev": "live-server .",
+    "build": "echo 'Build script here'"
+  },
+  "keywords": [
+    "Current weather conditions display (temperature, humidity, wind speed, pressure, description, icon)",
+    "5-day weather forecast with daily summaries",
+    "Hourly weather forecast for the next 24 hours",
+    "Interactive charts for temperature, humidity, and wind speed over time",
+    "Location search functionality with autocomplete",
+    "Geolocation support to automatically detect user's location",
+    "Responsive design for optimal viewing on various devices (desktop, tablet, mobile)",
+    "User-friendly interface with clear data visualization",
+    "Error handling for API requests and location services",
+    "Data persistence (using local storage) for user preferences (location)",
+    "Units selection (Celsius/Fahrenheit, m/s/kmh/mph)",
+    "Accessibility considerations (ARIA attributes, keyboard navigation)"
+  ],
+  "author": "Jarvis AI",
+  "dependencies": {
+    "react": "latest",
+    "react-dom": "latest",
+    "axios": "latest",
+    "chart.js": "latest",
+    "react-chartjs-2": "latest",
+    "react-scripts": "latest",
+    "@fortawesome/fontawesome-svg-core": "latest",
+    "@fortawesome/free-solid-svg-icons": "latest",
+    "@fortawesome/react-fontawesome": "latest"
+  },
+  "devDependencies": {}
+}
