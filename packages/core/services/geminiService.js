@@ -7,10 +7,7 @@ const geminiCache = {};
 // Debounce tracker to prevent rapid repeated calls
 const geminiDebounce = {};
 
-async function callGeminiAPI(prompt, authOrRetries = 0) {
-  const retries = typeof authOrRetries === 'number' ? authOrRetries : (authOrRetries.retries || 0);
-  const accessToken = typeof authOrRetries === 'object' ? authOrRetries.accessToken : null;
-
+async function callGeminiAPI(prompt, retries = 0) {
   // Check cache first
   if (geminiCache[prompt]) {
     return Promise.resolve(geminiCache[prompt]);
@@ -35,10 +32,10 @@ async function callGeminiAPI(prompt, authOrRetries = 0) {
       }
     });
 
-    // START: User's Working Logic Style
     const options = {
       hostname: 'generativelanguage.googleapis.com',
       port: 443,
+      path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,26 +43,14 @@ async function callGeminiAPI(prompt, authOrRetries = 0) {
       }
     };
 
-    if (accessToken) {
-      options.path = '/v1beta/models/gemini-2.5-flash:generateContent';
-      options.headers['Authorization'] = `Bearer ${accessToken}`;
-      if (process.env.GOOGLE_PROJECT_ID) {
-        options.headers['x-goog-user-project'] = process.env.GOOGLE_PROJECT_ID;
-      }
-    } else {
-      // EXACTLY match your working code path
-      options.path = `/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
-    }
-    // END: User's Working Logic Style
-
-    const req = https.request(options, (resolveRes) => {
+    const req = https.request(options, (res) => {
       let responseData = '';
 
-      resolveRes.on('data', (chunk) => {
+      res.on('data', (chunk) => {
         responseData += chunk;
       });
 
-      resolveRes.on('end', () => {
+      res.on('end', () => {
         try {
           const response = JSON.parse(responseData);
           if (response.error) {
@@ -73,7 +58,7 @@ async function callGeminiAPI(prompt, authOrRetries = 0) {
               const backoff = Math.pow(2, retries) * 1000;
               log(`⚠️ API Error (retry ${retries + 1}/${MAX_RETRIES}, waiting ${backoff / 1000}s): ${response.error.message}`, 'yellow');
               setTimeout(() => {
-                callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
+                callGeminiAPI(prompt, retries + 1).then(resolve).catch(reject);
               }, backoff);
               return;
             }
@@ -92,7 +77,7 @@ async function callGeminiAPI(prompt, authOrRetries = 0) {
           if (retries < MAX_RETRIES) {
             const backoff = Math.pow(2, retries) * 1000;
             setTimeout(() => {
-              callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
+              callGeminiAPI(prompt, retries + 1).then(resolve).catch(reject);
             }, backoff);
             return;
           }
@@ -105,7 +90,7 @@ async function callGeminiAPI(prompt, authOrRetries = 0) {
       if (retries < MAX_RETRIES) {
         const backoff = Math.pow(2, retries) * 1000;
         setTimeout(() => {
-          callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
+          callGeminiAPI(prompt, retries + 1).then(resolve).catch(reject);
         }, backoff);
         return;
       }

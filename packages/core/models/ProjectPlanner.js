@@ -6,7 +6,7 @@ class ProjectPlanner {
     this.currentProject = null;
   }
 
-  async createProjectPlan(projectDescription, authOptions = {}) {
+  async createProjectPlan(projectDescription) {
     log('\n🧠 AI Planning Phase Started...', 'magenta');
     log('━'.repeat(50), 'dim');
 

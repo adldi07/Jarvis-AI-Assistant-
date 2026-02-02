@@ -1,19 +1,19 @@
-# Jarvis AI SaaS (Monorepo)
+# Jarvis AI Assistant (Monorepo)
 
-An intelligent AI-powered software engineer that generates complete web applications. Now transformed into a scalable SaaS platform with Google OAuth integration and real-time previews.
+An intelligent AI-powered software engineer that generates complete web applications. Modular architecture supporting both Terminal and Web interfaces.
 
 ## 🚀 Key Modules
 
 - **`packages/core`**: The Brain. Storage-agnostic logic for planning and generation.
-- **`packages/web`**: The SaaS Dashboard (Next.js). Features Live Preview, AI Refinement, and User Quota management via OAuth.
-- **`packages/cli`**: The Classic Terminal interface using the refactored core.
+- **`packages/web`**: The Visual Dashboard (Next.js). Features Live Preview and AI Refinement Loop.
+- **`packages/cli`**: The Terminal interface for local file generation.
 
-## ✨ SaaS Features
+## ✨ Features
 
-- **Google OAuth 2.0 (Auto-Quota)**: Users log in with Google to use Jarvis with their *own* Google Generative AI quota—no master API key limit.
-- **Instant Live Preview**: Interactive split-screen view with a sandboxed Iframe rendering code instantly via Blobs.
-- **AI Refinement Loop**: Don't like a design? Just ask Jarvis to "make the button red" and it updates the code in place.
-- **Storage Adapters**: Hybrid system that supports both Disk (CLI) and In-Memory (Web) storage.
+- **Instant Live Preview**: Interactive split-screen view in the web dashboard that renders code instantly.
+- **AI Refinement Loop**: Give feedback and the AI updates the code in place.
+- **Storage Adapters**: Hybrid system supporting both Disk (CLI) and In-Memory (Web) storage.
+- **Clean Architecture**: Decoupled AI logic from UI and Storage layers.
 
 ## 📁 Monorepo Structure
 
@@ -23,7 +23,7 @@ root/
 ├── packages/
 │   ├── core/             # Shared logic (Gemini API, Generators)
 │   ├── cli/              # Terminal application
-│   └── web/              # Next.js SaaS Dashboard
+│   └── web/              # Next.js Dashboard
 ├── .env.example          # Environment setup template
 └── README.md
 ```
@@ -36,8 +36,10 @@ root/
    ```
 
 2. **Environment Setup**
-   Copy `.env.example` to `.env` and fill in your credentials.
-   *Note: For the Web Dashboard, you'll need Google Cloud OAuth credentials.*
+   Create a `.env` file in the root with your Gemini API Key:
+   ```env
+   GEMINI_API_KEY=your_api_key_here
+   ```
 
 3. **Usage**
 
@@ -58,4 +60,4 @@ Jarvis uses a custom **Storage Adapter Pattern**. The `FileGenerator` doesn't kn
 - **`InMemoryAdapter`**: In Web mode, stores files in a JSON object for instant browser previews and ZIP downloads.
 
 ---
-*Powered by Gemini 2.0 Flash*
+*Powered by Gemini 2.5 Flash*

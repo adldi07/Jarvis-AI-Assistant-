@@ -7,12 +7,12 @@ class CoreJarvis {
         this.generator = new FileGenerator(adapter);
     }
 
-    async createPlan(description, authOptions) {
-        return await this.planner.createProjectPlan(description, authOptions);
+    async createPlan(description) {
+        return await this.planner.createProjectPlan(description);
     }
 
-    async generate(plan, authOptions) {
-        await this.generator.generateProjectFiles(plan, authOptions);
+    async generate(plan) {
+        await this.generator.generateProjectFiles(plan);
     }
 }
 

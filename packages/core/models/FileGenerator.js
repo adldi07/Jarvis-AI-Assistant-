@@ -16,7 +16,7 @@ class FileGenerator {
     };
   }
 
-  async generateProjectFiles(plan, authOptions = {}) {
+  async generateProjectFiles(plan) {
     log('\n🚀 Code Generation Phase Started...', 'green');
     log('━'.repeat(50), 'dim');
 
@@ -52,7 +52,7 @@ class FileGenerator {
         displayProgress(completedItems, totalItems, `Generating file: ${item.name}`);
 
         try {
-          await this.generateSingleFile(projectPath, item, plan, authOptions);
+          await this.generateSingleFile(projectPath, item, plan);
           log(`✅ Generated: ${item.name}`, 'green');
 
           // Add delay for API rate limiting
@@ -86,7 +86,7 @@ class FileGenerator {
     }
   }
 
-  async generateSingleFile(projectPath, fileConfig, plan, authOptions) {
+  async generateSingleFile(projectPath, fileConfig, plan) {
     // Only generate content for actual code files
     if (!fileConfig.fileType || !this.shouldGenerateContent(fileConfig.fileType)) {
       await this.createFallbackFile(projectPath, fileConfig, plan);
@@ -94,7 +94,7 @@ class FileGenerator {
     }
 
     const prompt = this.buildPromptForFile(fileConfig, plan);
-    const content = await callGeminiAPI(prompt, authOptions);
+    const content = await callGeminiAPI(prompt);
 
     // Extract code from response
     const cleanContent = this.extractCodeFromResponse(content, fileConfig.fileType);

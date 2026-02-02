@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { Send, Zap, Code, Layout, Download, LogOut, Check, Terminal } from 'lucide-react';
+import { Send, Zap, Code, Layout, Download, Check, Terminal } from 'lucide-react';
+
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,7 +11,6 @@ function cn(...inputs) {
 }
 
 export default function Dashboard() {
-    const { data: session, status } = useSession();
     const [prompt, setPrompt] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [logs, setLogs] = useState([]);
@@ -24,32 +23,6 @@ export default function Dashboard() {
     useEffect(() => {
         logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [logs]);
-
-    if (status === 'loading') return <div className="min-h-screen grid place-items-center bg-black text-white font-mono text-xl animate-pulse">Initializing Jarvis...</div>;
-
-    if (!session) {
-        return (
-            <main className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-white p-6">
-                <div className="w-full max-w-md text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                    <div className="mx-auto w-24 h-24 bg-blue-600/20 rounded-3xl flex items-center justify-center border border-blue-500/30 shadow-[0_0_50px_rgba(37,99,235,0.15)]">
-                        <Zap className="text-blue-500 animate-pulse" size={48} />
-                    </div>
-                    <div>
-                        <h1 className="text-5xl font-extrabold tracking-tight mb-3 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent italic">JARVIS</h1>
-                        <p className="text-gray-400 text-lg">Your Personal AI Software Engineer.</p>
-                    </div>
-                    <button
-                        onClick={() => signIn('google')}
-                        className="w-full py-4 bg-white text-black font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl"
-                    >
-                        <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
-                        Connect with Google
-                    </button>
-                    <p className="text-[10px] text-gray-600 uppercase tracking-widest">Powered by Gemini & OAuth 2.0</p>
-                </div>
-            </main>
-        );
-    }
 
     const handleGenerate = async (e) => {
         if (e) e.preventDefault();
@@ -170,14 +143,11 @@ export default function Dashboard() {
         <div className="flex h-screen bg-[#050505] text-white overflow-hidden font-sans">
             {/* SIDEBAR */}
             <aside className="w-[380px] border-r border-white/5 flex flex-col bg-[#0a0a0a]">
-                <header className="p-6 flex items-center justify-between border-b border-white/5">
+                <header className="p-6 flex items-center border-b border-white/5">
                     <div className="flex items-center gap-2">
                         <Zap className="text-blue-500" size={20} fill="currentColor" />
                         <span className="font-black italic tracking-tighter text-xl">JARVIS</span>
                     </div>
-                    <button onClick={() => signOut()} className="p-2 text-gray-500 hover:text-white transition rounded-full hover:bg-white/5">
-                        <LogOut size={18} />
-                    </button>
                 </header>
 
                 <section className="flex-1 overflow-y-auto p-6 space-y-6">
