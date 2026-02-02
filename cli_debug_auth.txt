@@ -2,4 +2,4 @@
 [32m🚀 JARVIS STARTED[0m
 [36mType "help" for commands or "create <description>" to start building![0m
 
-💡 Jarvis > 
+💡 Jarvis > ^C

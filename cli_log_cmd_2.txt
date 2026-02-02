@@ -15,4 +15,4 @@ cd 'd:\Project1\Jarvis-AI-Assistant-main'
 
 After running this command, your current working directory in the terminal will be `d:\Project1\Jarvis-AI-Assistant-main`.[0m
 
-💡 Jarvis > 
+💡 Jarvis > ^C
