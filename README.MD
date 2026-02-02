@@ -2,7 +2,14 @@
 
 An intelligent AI-powered project generator and assistant that creates complete web applications using modern technologies.
 
-## 🚀 Features
+## � Code Quality & Status
+
+[![CodeFactor](https://www.codefactor.io/repository/github/adldi07/Jarvis-AI-Assistant-/badge)](https://www.codefactor.io/repository/github/adldi07/Jarvis-AI-Assistant-)
+[![codecov](https://codecov.io/gh/adldi07/Jarvis-AI-Assistant-/branch/main/graph/badge.svg)](https://codecov.io/gh/adldi07/Jarvis-AI-Assistant-)
+[![Node.js CI](https://github.com/adldi07/Jarvis-AI-Assistant-/actions/workflows/ci.yml/badge.svg)](https://github.com/adldi07/Jarvis-AI-Assistant-/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## �🚀 Features
 
 - **AI-Powered Project Generation**: Creates complete projects with HTML, CSS, and JavaScript
 - **Voice Interaction**: Speak to Jarvis and get voice responses
