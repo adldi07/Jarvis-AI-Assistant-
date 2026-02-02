@@ -7,29 +7,21 @@ const geminiCache = {};
 // Debounce tracker to prevent rapid repeated calls
 const geminiDebounce = {};
 
-async function callGeminiAPI(prompt, options = {}) {
-  let retries = 0;
-  let apiKey = geminiApiKey;
-  let accessToken = null;
+async function callGeminiAPI(prompt, authOrRetries = 0) {
+  const retries = typeof authOrRetries === 'number' ? authOrRetries : (authOrRetries.retries || 0);
+  const accessToken = typeof authOrRetries === 'object' ? authOrRetries.accessToken : null;
 
-  if (typeof options === 'number') {
-    retries = options;
-  } else {
-    retries = options.retries || 0;
-    apiKey = options.apiKey || geminiApiKey;
-    accessToken = options.accessToken || null;
-  }
-
-  // Check cache first (cache key needs to handle auth context? For now, global cache is risky if user-specific logic differs. But prompt is prompt. We assume same prompt + same model = same result regardless of user)
+  // Check cache first
   if (geminiCache[prompt]) {
     return Promise.resolve(geminiCache[prompt]);
   }
 
-  // Debounce
+  // Debounce: if a call for this prompt is in progress, return the same promise
   if (geminiDebounce[prompt]) {
     return geminiDebounce[prompt];
   }
 
+  // Wrap the actual API call in a promise and store it in debounce tracker
   const apiPromise = new Promise((resolve, reject) => {
     const data = JSON.stringify({
       contents: [{
@@ -43,44 +35,45 @@ async function callGeminiAPI(prompt, options = {}) {
       }
     });
 
-    // Construct Path and Headers based on Auth Type
-    let pathParam = '/v1beta/models/gemini-2.5-flash:generateContent';
-    const headers = {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(data)
+    // START: User's Working Logic Style
+    const options = {
+      hostname: 'generativelanguage.googleapis.com',
+      port: 443,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
     };
 
     if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
-      headers['x-goog-user-project'] = process.env.GOOGLE_PROJECT_ID; // Recommended for OAuth
+      options.path = '/v1beta/models/gemini-2.5-flash:generateContent';
+      options.headers['Authorization'] = `Bearer ${accessToken}`;
+      if (process.env.GOOGLE_PROJECT_ID) {
+        options.headers['x-goog-user-project'] = process.env.GOOGLE_PROJECT_ID;
+      }
     } else {
-      pathParam += `?key=${apiKey}`;
+      // EXACTLY match your working code path
+      options.path = `/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
     }
+    // END: User's Working Logic Style
 
-    const requestOptions = {
-      hostname: 'generativelanguage.googleapis.com',
-      port: 443,
-      path: pathParam,
-      method: 'POST',
-      headers: headers
-    };
-
-    const req = https.request(requestOptions, (res) => {
+    const req = https.request(options, (resolveRes) => {
       let responseData = '';
 
-      res.on('data', (chunk) => {
+      resolveRes.on('data', (chunk) => {
         responseData += chunk;
       });
 
-      res.on('end', () => {
+      resolveRes.on('end', () => {
         try {
           const response = JSON.parse(responseData);
           if (response.error) {
             if (retries < MAX_RETRIES) {
               const backoff = Math.pow(2, retries) * 1000;
-              log(`⚠️ API Error (retry ${retries + 1}/${MAX_RETRIES}): ${response.error.message}`, 'yellow');
+              log(`⚠️ API Error (retry ${retries + 1}/${MAX_RETRIES}, waiting ${backoff / 1000}s): ${response.error.message}`, 'yellow');
               setTimeout(() => {
-                callGeminiAPI(prompt, { retries: retries + 1, apiKey, accessToken }).then(resolve).catch(reject);
+                callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
               }, backoff);
               return;
             }
@@ -92,14 +85,14 @@ async function callGeminiAPI(prompt, options = {}) {
             geminiCache[prompt] = text;
             resolve(text);
           } else {
-            console.error('Unexpected response:', responseData);
-            reject(new Error('Unexpected response format or empty candidate'));
+            console.error('Unexpected Response Structure:', responseData);
+            reject(new Error('Unexpected response format'));
           }
         } catch (err) {
           if (retries < MAX_RETRIES) {
             const backoff = Math.pow(2, retries) * 1000;
             setTimeout(() => {
-              callGeminiAPI(prompt, { retries: retries + 1, apiKey, accessToken }).then(resolve).catch(reject);
+              callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
             }, backoff);
             return;
           }
@@ -112,7 +105,7 @@ async function callGeminiAPI(prompt, options = {}) {
       if (retries < MAX_RETRIES) {
         const backoff = Math.pow(2, retries) * 1000;
         setTimeout(() => {
-          callGeminiAPI(prompt, { retries: retries + 1, apiKey, accessToken }).then(resolve).catch(reject);
+          callGeminiAPI(prompt, accessToken ? { retries: retries + 1, accessToken } : retries + 1).then(resolve).catch(reject);
         }, backoff);
         return;
       }
@@ -132,4 +125,4 @@ async function callGeminiAPI(prompt, options = {}) {
 
 module.exports = {
   callGeminiAPI
-}; 
+};
