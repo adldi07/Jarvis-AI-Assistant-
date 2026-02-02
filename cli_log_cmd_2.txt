@@ -1,0 +1,18 @@
+[32m🚀 JARVIS STARTED[0m
+[36mType "help" for commands or "create <description>" to start building![0m
+
+💡 Jarvis > [36m🤔 Let me think...[0m
+[32m🤖 The command you provided is correct for changing the directory in Windows Command Prompt or PowerShell:
+
+```bash
+cd 'd:\Project1\Jarvis-AI-Assistant-main'
+```
+
+**Explanation:**
+
+*   `cd` stands for "change directory".
+*   `'d:\Project1\Jarvis-AI-Assistant-main'` is the full path to the directory you want to navigate to. The single quotes are optional here if the path doesn't contain spaces, but they don't hurt and are good practice if you're unsure.
+
+After running this command, your current working directory in the terminal will be `d:\Project1\Jarvis-AI-Assistant-main`.[0m
+
+💡 Jarvis > 

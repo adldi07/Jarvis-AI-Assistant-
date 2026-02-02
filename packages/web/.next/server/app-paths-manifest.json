@@ -1,0 +1,7 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/page": "app/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/generate/route": "app/api/generate/route.js",
+  "/api/refine/route": "app/api/refine/route.js"
+}

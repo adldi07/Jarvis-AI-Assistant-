@@ -1,188 +1,61 @@
-# Jarvis AI Assistant
+# Jarvis AI SaaS (Monorepo)
 
-An intelligent AI-powered project generator and assistant that creates complete web applications using modern technologies.
+An intelligent AI-powered software engineer that generates complete web applications. Now transformed into a scalable SaaS platform with Google OAuth integration and real-time previews.
 
-## 🚀 Features
+## 🚀 Key Modules
 
-- **AI-Powered Project Generation**: Creates complete projects with HTML, CSS, and JavaScript
-- **Voice Interaction**: Speak to Jarvis and get voice responses
-- **Smart Project Planning**: AI generates detailed project plans with file structures
-- **Modern Code Generation**: Creates responsive, modern web applications
-- **Modular Architecture**: Clean, maintainable code structure
+- **`packages/core`**: The Brain. Storage-agnostic logic for planning and generation.
+- **`packages/web`**: The SaaS Dashboard (Next.js). Features Live Preview, AI Refinement, and User Quota management via OAuth.
+- **`packages/cli`**: The Classic Terminal interface using the refactored core.
 
-## 📁 Project Structure
+## ✨ SaaS Features
 
-```
-jarvis-ai-assistant/
-├── config/
-│   └── config.js          # Configuration settings
-├── controllers/
-│   └── JarvisController.js # Main application controller
-├── models/
-│   ├── ProjectPlanner.js  # AI project planning
-│   └── FileGenerator.js   # File generation logic
-├── services/
-│   ├── geminiService.js   # Gemini API integration
-│   └── voiceService.js    # Voice input/output
-├── utils/
-│   └── logger.js          # Logging utilities
-├── projectsByJarvis/      # Generated projects directory
-├── index.js               # Application entry point
-├── package.json
+- **Google OAuth 2.0 (Auto-Quota)**: Users log in with Google to use Jarvis with their *own* Google Generative AI quota—no master API key limit.
+- **Instant Live Preview**: Interactive split-screen view with a sandboxed Iframe rendering code instantly via Blobs.
+- **AI Refinement Loop**: Don't like a design? Just ask Jarvis to "make the button red" and it updates the code in place.
+- **Storage Adapters**: Hybrid system that supports both Disk (CLI) and In-Memory (Web) storage.
+
+## 📁 Monorepo Structure
+
+```text
+root/
+├── package.json          # Workspace manager
+├── packages/
+│   ├── core/             # Shared logic (Gemini API, Generators)
+│   ├── cli/              # Terminal application
+│   └── web/              # Next.js SaaS Dashboard
+├── .env.example          # Environment setup template
 └── README.md
 ```
 
-## 🛠️ Installation
+## 🛠️ Installation & Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd jarvis-ai-assistant
-   ```
-
-2. **Install dependencies**
+1. **Clone and Install**
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
+2. **Environment Setup**
+   Copy `.env.example` to `.env` and fill in your credentials.
+   *Note: For the Web Dashboard, you'll need Google Cloud OAuth credentials.*
+
+3. **Usage**
+
+   **Run Terminal Jarvis:**
    ```bash
-   # Create .env file
-   echo "GEMINI_API_KEY=your-api-key-here" > .env
+   npm run cli
    ```
 
-4. **Get your Gemini API key**
-   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - Create a new API key
-   - Add it to your `.env` file
+   **Run Web Dashboard:**
+   ```bash
+   npm run web
+   ```
 
-## 🎯 Usage
+## 🏗️ Architecture: The Adapter Pattern
 
-### Start Jarvis
-```bash
-npm start
-```
-
-### Available Commands
-
-| Command | Description |
-|---------|-------------|
-| `create <description>` | Create a new project |
-| `list` | List current directory files |
-| `open <filename>` | Open and display a file |
-| `voice` | Start voice interaction mode |
-| `help` | Show all commands |
-| `exit` | Exit the application |
-
-### Examples
-
-```bash
-# Create a todo app
-create todo app with drag and drop
-
-# Create a weather dashboard
-create weather dashboard with charts
-
-# Create a fullstack expense tracker
-create fullstack expense tracker with React
-```
-
-### Voice Mode
-
-Type `voice` to enter voice interaction mode:
-
-- Say "create project [description]" to create projects
-- Ask any question for AI responses
-- Say "exit voice" to return to text mode
-
-## 🎨 Generated Projects
-
-All projects are created in the `projectsByJarvis/` directory with:
-
-- **Complete file structure** with HTML, CSS, and JavaScript
-- **Modern responsive design** with CSS Grid and Flexbox
-- **Interactive features** with smooth animations
-- **Production-ready code** with best practices
-- **Comprehensive documentation** with README files
-
-## 🏗️ Architecture
-
-### Core Components
-
-1. **JarvisController**: Main application logic and user interaction
-2. **ProjectPlanner**: AI-powered project planning and structure generation
-3. **FileGenerator**: Code generation with templates and fallbacks
-4. **GeminiService**: API integration with caching and retry logic
-5. **VoiceService**: Voice input/output using Windows SAPI
-
-### Key Features
-
-- **Modular Design**: Clean separation of concerns
-- **Error Handling**: Robust error handling with fallbacks
-- **Caching**: API response caching to reduce calls
-- **Rate Limiting**: Built-in rate limiting for API calls
-- **Voice Support**: Windows speech synthesis and recognition
-
-## 🔧 Configuration
-
-Edit `config/config.js` to customize:
-
-- API settings and delays
-- Voice configuration
-- Project directory location
-- Console colors and styling
-
-## 🎤 Voice Features
-
-### Requirements
-- Windows 10/11
-- Microphone (for voice input)
-- Speakers (for voice output)
-- Windows Speech Recognition enabled
-
-### Voice Commands
-- "Hello" / "Hi" - Get greetings
-- "Create project [description]" - Create new projects
-- "List files" - Show directory contents
-- "Help" - Show available commands
-- "Exit voice" - Return to text mode
-
-## 🚀 Development
-
-### Run in development mode
-```bash
-npm run dev
-```
-
-### Project Structure
-- `config/`: Configuration files
-- `controllers/`: Main application logic
-- `models/`: Business logic and data models
-- `services/`: External service integrations
-- `utils/`: Utility functions and helpers
-
-## 📝 Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-GEMINI_API_KEY=your-gemini-api-key-here
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-
-## 🙏 Acknowledgments
-
-- Google Gemini API for AI capabilities
-- Windows Speech API for voice features
-- Node.js community for excellent tooling
+Jarvis uses a custom **Storage Adapter Pattern**. The `FileGenerator` doesn't know about `fs` or the `browser`. Instead, it uses:
+- **`DiskAdapter`**: In CLI mode, writes directly to your local file system.
+- **`InMemoryAdapter`**: In Web mode, stores files in a JSON object for instant browser previews and ZIP downloads.
 
 ---
-
+*Powered by Gemini 2.0 Flash*
