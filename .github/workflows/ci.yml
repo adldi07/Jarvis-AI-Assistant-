@@ -24,6 +24,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     
+    - name: Ensure npm is compatible with lockfile
+      run: |
+        echo "Current npm version: $(npm --version)"
+        MAJOR=$(npm --version | cut -d. -f1)
+        if [ "$MAJOR" -lt 9 ]; then
+          echo "Upgrading npm to v9 to support lockfileVersion 3"
+          npm install -g npm@9
+        else
+          echo "npm is >=9"
+        fi
+
     - name: Install dependencies
       run: npm ci
     
