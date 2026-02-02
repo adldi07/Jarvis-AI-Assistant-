@@ -96,6 +96,7 @@ class JarvisController {
 
       if (!command) {
         this.askQuestion();
+        // console.log(`this is temp`);
         return;
       }
 
@@ -207,7 +208,9 @@ class JarvisController {
       }
       
       if (input.includes('list files') || input.includes('show files')) {
+        // console.log(`some`);
         this.listFiles();
+        // console.log(`some`);
         continue;
       }
       

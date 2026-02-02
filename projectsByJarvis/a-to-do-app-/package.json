@@ -1,0 +1,19 @@
+{
+  "name": "a-to-do-app-",
+  "version": "1.0.0",
+  "description": "a to do app ",
+  "main": "index.html",
+  "scripts": {
+    "start": "open index.html",
+    "dev": "live-server .",
+    "build": "echo 'Build script here'"
+  },
+  "keywords": [
+    "Core functionality",
+    "Responsive design",
+    "Modern UI"
+  ],
+  "author": "Jarvis AI",
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -18,6 +18,7 @@
   "author": "Jarvis AI",
   "license": "MIT",
   "dependencies": {
+    "@google/genai": "^1.31.0",
     "dotenv": "^16.0.0"
   },
   "devDependencies": {

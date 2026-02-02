@@ -1,6 +1,6 @@
-// a-new-project-kumar JavaScript
+// todo-app-with-drag-and-drop JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('a new project kumar loaded successfully!');
+    console.log('todo app with drag and drop loaded successfully!');
     
     // Initialize the application
     init();

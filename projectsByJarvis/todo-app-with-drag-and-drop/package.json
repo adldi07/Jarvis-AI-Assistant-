@@ -1,7 +1,7 @@
 {
-  "name": "a-new-project-kumar",
+  "name": "todo-app-with-drag-and-drop",
   "version": "1.0.0",
-  "description": "a new project kumar",
+  "description": "todo app with drag and drop",
   "main": "index.html",
   "scripts": {
     "start": "open index.html",

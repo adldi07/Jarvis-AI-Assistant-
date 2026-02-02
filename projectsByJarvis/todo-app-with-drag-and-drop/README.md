@@ -1,6 +1,6 @@
-# a-new-project-kumar
+# todo-app-with-drag-and-drop
 
-a new project kumar
+todo app with drag and drop
 
 ## Features
 - Core functionality
