@@ -109,14 +109,24 @@ export default function Dashboard() {
     };
 
     const getPreviewSource = () => {
-        if (!files['index.html']) return '';
-        let html = files['index.html'];
-        const css = files['styles.css'] || '';
-        const js = files['script.js'] || '';
+        const findFile = (name) => {
+            const path = Object.keys(files).find(p => p.endsWith(name));
+            return path ? files[path] : '';
+        };
+
+        const html = findFile('index.html');
+        const css = findFile('styles.css');
+        const js = findFile('script.js');
+
+        if (!html) return '';
 
         let injectedHtml = html;
-        if (css) injectedHtml = injectedHtml.replace(/<link.*href="styles\.css".*>/i, `<style>${css}</style>`);
-        if (js) injectedHtml = injectedHtml.replace(/<script.*src="script\.js".*><\/script>/i, `<script>${js}</script>`);
+        if (css) {
+            injectedHtml = injectedHtml.replace(/<link.*href="styles\.css".*>/i, `<style>${css}</style>`);
+        }
+        if (js) {
+            injectedHtml = injectedHtml.replace(/<script.*src="script\.js".*><\/script>/i, `<script>${js}</script>`);
+        }
 
         if (injectedHtml === html) {
             injectedHtml = injectedHtml.replace('</head>', `<style>${css}</style></head>`)
@@ -277,7 +287,7 @@ export default function Dashboard() {
                                                         : "text-gray-500 hover:text-gray-300 border-transparent hover:bg-white/5"
                                                 )}
                                             >
-                                                {f}
+                                                {f.split('/').pop()}
                                             </button>
                                         ))}
                                     </div>

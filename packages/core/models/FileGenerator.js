@@ -1,7 +1,8 @@
 const path = require('path');
 const { callGeminiAPI } = require('../services/geminiService');
+const { callPerplexityAPI } = require('../services/perplexityService');
 const { log, delay, displayProgress } = require('../utils/logger');
-const { API_DELAY, PROJECTS_DIR } = require('../config/config');
+const { API_DELAY, PROJECTS_DIR, perplexityApiKey } = require('../config/config');
 
 class FileGenerator {
   constructor(adapter) {
@@ -94,7 +95,19 @@ class FileGenerator {
     }
 
     const prompt = this.buildPromptForFile(fileConfig, plan);
-    const content = await callGeminiAPI(prompt);
+    let content;
+
+    try {
+      // Use Perplexity if key is available, else Gemini
+      content = perplexityApiKey ? await callPerplexityAPI(prompt) : await callGeminiAPI(prompt);
+    } catch (error) {
+      log(`⚠️ Perplexity failed for ${fileConfig.name}, falling back to Gemini...`, 'yellow');
+      try {
+        content = await callGeminiAPI(prompt);
+      } catch (geminiError) {
+        throw new Error(`Both Perplexity and Gemini failed: ${geminiError.message}`);
+      }
+    }
 
     // Extract code from response
     const cleanContent = this.extractCodeFromResponse(content, fileConfig.fileType);
@@ -146,6 +159,7 @@ Return ONLY the code, no explanations or markdown formatting.
 - Use CSS Grid and Flexbox for layouts
 - Implement CSS custom properties (variables)
 - Add smooth transitions and hover effects
+- Use high-end aesthetics (vibrant gradients, glassmorphism, depth)
 - Make it fully responsive (mobile-first)
 - Use modern CSS features (clamp, min/max, etc.)
 - Include loading states and micro-animations

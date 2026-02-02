@@ -23,7 +23,15 @@ export async function POST(req) {
                     const jarvis = new Jarvis(adapter);
 
                     send({ type: 'status', message: '🧠 Thinking...' });
-                    const plan = await jarvis.createPlan(description);
+                    const result = await jarvis.createPlan(description);
+
+                    if (result.type === 'chat') {
+                        send({ type: 'status', message: `🤖 ${result.message}` });
+                        controller.close();
+                        return;
+                    }
+
+                    const plan = result.plan;
                     send({ type: 'plan', data: plan });
 
                     send({ type: 'status', message: '🚀 Building...' });

@@ -34,7 +34,14 @@ class JarvisController {
       log(`🎨 Creating: ${description}`, 'cyan');
 
       // Step 1: Plan the project
-      const plan = await this.planner.createProjectPlan(description);
+      const result = await this.planner.createProjectPlan(description);
+
+      if (result.type === 'chat') {
+        log(`🤖 ${result.message}`, 'green');
+        return;
+      }
+
+      const plan = result.plan;
 
       // Step 2: Confirm with user
       const confirmed = await this.confirmPlan();

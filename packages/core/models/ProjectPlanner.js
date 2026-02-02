@@ -1,5 +1,7 @@
 const { callGeminiAPI } = require('../services/geminiService');
+const { callPerplexityAPI } = require('../services/perplexityService');
 const { log } = require('../utils/logger');
+const { perplexityApiKey } = require('../config/config');
 
 class ProjectPlanner {
   constructor() {
@@ -7,50 +9,76 @@ class ProjectPlanner {
   }
 
   async createProjectPlan(projectDescription) {
-    log('\n🧠 AI Planning Phase Started...', 'magenta');
+    log('\n🧠 AI Processing Context (Perplexity AI)...', 'magenta');
     log('━'.repeat(50), 'dim');
 
     const planningPrompt = `
-You are an expert software architect. Create a detailed project plan for: "${projectDescription}"
+You are Jarvis, an advanced AI software engineer. Analyze the user request: "${projectDescription}"
 
-Respond with a JSON object containing:
-{
-  "projectName": "kebab-case-name",
-  "description": "Brief description",
-  "features": ["feature1", "feature2", ...],
-  "techStack": ["html", "css", "javascript"],
-  "fileStructure": [
-    {"name": "index.html", "type": "file", "fileType": "html", "description": "Main HTML file"},
-    {"name": "styles.css", "type": "file", "fileType": "css", "description": "Styling"},
-    {"name": "script.js", "type": "file", "fileType": "javascript", "description": "Main functionality"},
-    {"name": "assets", "type": "directory", "description": "Static assets folder"},
-    {"name": "components", "type": "directory", "description": "Reusable components"}
-  ],
-  "dependencies": ["any external libraries needed"],
-  "architecture": "Brief explanation of how components work together"
-}
+- If it is a GREETING or GENERAL CONVERSATION:
+  Return JSON: { "intent": "chat", "message": "Your friendly response as Jarvis" }
 
-For complex projects, include nested directory structures like:
-{"name": "src/components/auth", "type": "directory", "description": "Authentication components"},
-{"name": "src/components/auth/Login.js", "type": "file", "fileType": "javascript", "description": "Login component"}
+- If it is a request to BUILD/CREATE a project/app/tool:
+  Return JSON: { 
+    "intent": "project", 
+    "plan": {
+      "projectName": "kebab-case-name",
+      "description": "Short description",
+      "features": ["feature1", "feature2"],
+      "techStack": ["html", "css", "javascript"],
+      "fileStructure": [
+        {"name": "index.html", "type": "file", "fileType": "html", "description": "Main HTML with semantic structure"},
+        {"name": "styles.css", "type": "file", "fileType": "css", "description": "Modern CSS with variables, gradients, and animations"},
+        {"name": "script.js", "type": "file", "fileType": "javascript", "description": "Clean, modular logic"}
+      ],
+      "dependencies": [],
+      "architecture": "Describe how the UI and logic interact"
+    }
+  }
 
-Make it modern, responsive, and feature-complete. Focus on clean code and good UX.
+- DESIGN GUIDELINES:
+  - Use high-end, premium aesthetics (glassmorphism, vibrant gradients, shadows).
+  - Use Google Fonts (e.g., Inter, Montserrat).
+  - Ensure mobile-first responsiveness.
+  - Add smooth transitions and hover micro-animations.
+
+Return ONLY clean JSON.
 `;
 
     try {
-      const response = await callGeminiAPI(planningPrompt);
-      const planMatch = response.match(/\{[\s\S]*\}/);
+      // Use Perplexity if key is available, otherwise use Gemini
+      const response = perplexityApiKey ? await callPerplexityAPI(planningPrompt) : await callGeminiAPI(planningPrompt);
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
 
-      if (planMatch) {
-        this.currentProject = JSON.parse(planMatch[0]);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+
+        if (result.intent === 'chat') {
+          return { type: 'chat', message: result.message };
+        }
+
+        this.currentProject = result.plan;
         this.displayPlan();
-        return this.currentProject;
+        return { type: 'project', plan: this.currentProject };
       } else {
-        throw new Error('Could not parse project plan');
+        throw new Error('Could not parse AI response');
       }
     } catch (error) {
-      log(`❌ Planning failed: ${error.message}`, 'red');
-      return this.createFallbackPlan(projectDescription);
+      log(`❌ AI analysis failed: ${error.message}. Trying Gemini fallback...`, 'red');
+      try {
+        const response = await callGeminiAPI(planningPrompt);
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const result = JSON.parse(jsonMatch[0]);
+          if (result.intent === 'chat') return { type: 'chat', message: result.message };
+          this.currentProject = result.plan;
+          this.displayPlan();
+          return { type: 'project', plan: this.currentProject };
+        }
+      } catch (fallbackError) {
+        log(`❌ Gemini fallback also failed: ${fallbackError.message}`, 'red');
+      }
+      return { type: 'project', plan: this.createFallbackPlan(projectDescription) };
     }
   }
 
