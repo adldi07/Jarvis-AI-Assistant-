@@ -1,0 +1,55 @@
+name: Enhanced CI with Code Quality
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run ESLint
+      run: npm run lint || true
+    
+    - name: Check for security vulnerabilities
+      run: npm audit --audit-level=high || true
+    
+    - name: Validate package.json
+      run: node -e "require('./package.json')"
+    
+    - name: Check for hardcoded secrets
+      run: |
+        if grep -r "api_key\|password\|secret" . --include="*.js" --exclude-dir=node_modules --exclude-dir=projectsByJarvis; then
+          echo "⚠️ Warning: Possible hardcoded credentials found"
+          exit 0
+        fi
+    
+    - name: Check for .env files in git
+      run: |
+        if git status | grep -E "\.env"; then
+          echo "❌ ERROR: .env file detected in git staging"
+          exit 1
+        fi
+        echo "✓ No .env files found in git"
+    
+    - name: Verify API key is not in URLs
+      run: |
+        if grep -r "key=\${" . --include="*.js" --exclude-dir=node_modules --exclude-dir=projectsByJarvis; then
+          echo "❌ ERROR: API key detected in URL string"
+          exit 1
+        fi
+        echo "✓ No API keys in URLs"
+

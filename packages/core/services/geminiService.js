@@ -35,11 +35,12 @@ async function callGeminiAPI(prompt, retries = 0) {
     const options = {
       hostname: 'generativelanguage.googleapis.com',
       port: 443,
-      path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+      path: '/v1beta/models/gemini-2.5-flash:generateContent',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(data)
+        'Content-Length': Buffer.byteLength(data),
+        'x-goog-api-key': geminiApiKey
       }
     };
 
