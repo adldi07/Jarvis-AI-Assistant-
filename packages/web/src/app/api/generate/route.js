@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req) {
     try {
-        const { description } = await req.json();
+        const { description, model } = await req.json();
         if (!description) {
             return NextResponse.json({ error: 'Description is required' }, { status: 400 });
         }
@@ -23,7 +23,7 @@ export async function POST(req) {
                     const jarvis = new Jarvis(adapter);
 
                     send({ type: 'status', message: '🧠 Thinking...' });
-                    const result = await jarvis.createPlan(description);
+                    const result = await jarvis.createPlan(description, model);
 
                     if (result.type === 'chat') {
                         send({ type: 'status', message: `🤖 ${result.message}` });

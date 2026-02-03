@@ -2,7 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 5, 5, 5;
+    --background-end-rgb: 10, 10, 10;
+}
+
 body {
-    background: #000;
-    color: #fff;
+    background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
+    color: rgb(var(--foreground-rgb));
+    font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel {
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }

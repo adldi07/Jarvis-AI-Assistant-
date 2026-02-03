@@ -10,7 +10,7 @@ class ProjectPlanner {
     this.currentProject = null;
   }
 
-  async createProjectPlan(projectDescription) {
+  async createProjectPlan(projectDescription, model = 'auto') {
     log('\n🧠 AI Processing Context...', 'magenta');
     log('━'.repeat(50), 'dim');
 
@@ -48,15 +48,20 @@ Return ONLY clean JSON.
 `;
 
     try {
-      // Use Groq (Highest Priority), then Open Router, then Perplexity, then Gemini
       let response;
-      if (groqApiKey) {
+
+      // Determine which API to call based on model preference or availability
+      const useGroq = (model === 'groq' || model === 'auto') && groqApiKey;
+      const useOpenRouter = (model === 'openrouter' || (model === 'auto' && !useGroq)) && openRouterApiKey;
+      const usePerplexity = (model === 'perplexity' || (model === 'auto' && !useGroq && !useOpenRouter)) && perplexityApiKey;
+
+      if (useGroq) {
         log('🚀 Using Groq API...', 'cyan');
         response = await callGroqAPI(planningPrompt);
-      } else if (openRouterApiKey) {
+      } else if (useOpenRouter) {
         log('🚀 Using Open Router API...', 'cyan');
         response = await callOpenRouterAPI(planningPrompt);
-      } else if (perplexityApiKey) {
+      } else if (usePerplexity) {
         log('🧠 Using Perplexity AI...', 'magenta');
         response = await callPerplexityAPI(planningPrompt);
       } else {
