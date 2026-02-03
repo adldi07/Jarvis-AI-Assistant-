@@ -1,7 +1,8 @@
 const { callGeminiAPI } = require('../services/geminiService');
 const { callPerplexityAPI } = require('../services/perplexityService');
+const { callOpenRouterAPI } = require('../services/openRouterService');
 const { log } = require('../utils/logger');
-const { perplexityApiKey } = require('../config/config');
+const { perplexityApiKey, openRouterApiKey } = require('../config/config');
 
 class ProjectPlanner {
   constructor() {
@@ -9,7 +10,7 @@ class ProjectPlanner {
   }
 
   async createProjectPlan(projectDescription) {
-    log('\n🧠 AI Processing Context (Perplexity AI)...', 'magenta');
+    log('\n🧠 AI Processing Context...', 'magenta');
     log('━'.repeat(50), 'dim');
 
     const planningPrompt = `
@@ -46,8 +47,18 @@ Return ONLY clean JSON.
 `;
 
     try {
-      // Use Perplexity if key is available, otherwise use Gemini
-      const response = perplexityApiKey ? await callPerplexityAPI(planningPrompt) : await callGeminiAPI(planningPrompt);
+      // Use Open Router if key is available (primary), then Perplexity, then Gemini
+      let response;
+      if (openRouterApiKey) {
+        log('🚀 Using Open Router API...', 'cyan');
+        response = await callOpenRouterAPI(planningPrompt);
+      } else if (perplexityApiKey) {
+        log('🧠 Using Perplexity AI...', 'magenta');
+        response = await callPerplexityAPI(planningPrompt);
+      } else {
+        log('✨ Using Gemini API...', 'magenta');
+        response = await callGeminiAPI(planningPrompt);
+      }
       const jsonMatch = response.match(/\{[\s\S]*\}/);
 
       if (jsonMatch) {
