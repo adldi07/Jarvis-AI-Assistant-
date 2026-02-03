@@ -39,12 +39,8 @@ async function callGeminiAPI(prompt, retries = 0) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-<<<<<<< HEAD:services/geminiService.js
         'Content-Length': Buffer.byteLength(data),
         'x-goog-api-key': geminiApiKey
-=======
-        'Content-Length': Buffer.byteLength(data)
->>>>>>> upgrade:packages/core/services/geminiService.js
       }
     };
 
