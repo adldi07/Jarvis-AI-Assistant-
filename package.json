@@ -6,6 +6,8 @@
   ],
   "scripts": {
     "cli": "npm start --workspace=@jarvis/cli",
-    "web": "npm run dev --workspace=@jarvis/web"
+    "web": "npm run dev --workspace=@jarvis/web",
+    "build": "npm run build --workspace=@jarvis/web",
+    "lint": "npm run lint --workspaces"
   }
 }
