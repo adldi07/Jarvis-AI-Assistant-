@@ -1,8 +1,9 @@
 const { callGeminiAPI } = require('../services/geminiService');
 const { callPerplexityAPI } = require('../services/perplexityService');
 const { callOpenRouterAPI } = require('../services/openRouterService');
+const { callGroqAPI } = require('../services/groqService');
 const { log } = require('../utils/logger');
-const { perplexityApiKey, openRouterApiKey } = require('../config/config');
+const { perplexityApiKey, openRouterApiKey, groqApiKey } = require('../config/config');
 
 class ProjectPlanner {
   constructor() {
@@ -47,9 +48,12 @@ Return ONLY clean JSON.
 `;
 
     try {
-      // Use Open Router if key is available (primary), then Perplexity, then Gemini
+      // Use Groq (Highest Priority), then Open Router, then Perplexity, then Gemini
       let response;
-      if (openRouterApiKey) {
+      if (groqApiKey) {
+        log('🚀 Using Groq API...', 'cyan');
+        response = await callGroqAPI(planningPrompt);
+      } else if (openRouterApiKey) {
         log('🚀 Using Open Router API...', 'cyan');
         response = await callOpenRouterAPI(planningPrompt);
       } else if (perplexityApiKey) {
