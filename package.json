@@ -1,38 +1,11 @@
 {
-  "name": "jarvis-ai-assistant",
-  "version": "1.0.0",
-  "description": "An AI-powered project generator and assistant",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
-  },
-  "keywords": [
-    "ai",
-    "assistant",
-    "project-generator",
-    "jarvis",
-    "cli"
+  "name": "jarvis-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
-  "author": "Jarvis AI",
-  "license": "MIT",
-  "dependencies": {
-    "@google/genai": "^1.31.0",
-    "dotenv": "^16.0.0"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.29.0",
-    "babel-jest": "^30.2.0",
-    "eslint": "^9.39.2",
-    "jest": "^30.2.0",
-    "nodemon": "^2.0.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
+  "scripts": {
+    "cli": "npm start --workspace=@jarvis/cli",
+    "web": "npm run dev --workspace=@jarvis/web"
   }
 }

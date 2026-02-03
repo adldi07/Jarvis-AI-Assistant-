@@ -1,0 +1,9 @@
+{
+    "name": "@jarvis/core",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+        "@google/genai": "^1.31.0",
+        "dotenv": "^16.0.0"
+    }
+}
