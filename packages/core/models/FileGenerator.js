@@ -129,71 +129,17 @@ class FileGenerator {
   }
 
   buildPromptForFile(fileConfig, plan) {
-    const basePrompt = `
-Generate ${fileConfig.fileType.toUpperCase()} code for a ${plan.description} project.
-
-File: ${fileConfig.name}
-Purpose: ${fileConfig.description}
-Features to implement: ${plan.features.join(', ')}
-
-Requirements:
-- Modern, clean, and responsive design
-- Follow best practices for ${fileConfig.fileType}
-- Make it production-ready
-- Include comments for complex parts
-
-${this.getSpecificRequirements(fileConfig.fileType, plan)}
-
-Return ONLY the code, no explanations or markdown formatting.
-`;
-
-    return basePrompt;
+    const reqs = this.getSpecificRequirements(fileConfig.fileType, plan);
+    return `${fileConfig.fileType.toUpperCase()} for ${plan.description}. File:${fileConfig.name} Purpose:${fileConfig.description} Features:${plan.features.join(',')}. ${reqs} Code only, no markdown.`;
   }
 
   getSpecificRequirements(type, plan) {
-    switch (type.toLowerCase()) {
-      case 'html':
-        return `
-- Use semantic HTML5 elements
-- Include proper meta tags for mobile
-- Link to styles.css and script.js appropriately
-- Add accessibility features (alt texts, ARIA labels)
-- Modern structure with header, main, footer if applicable
-        `;
-
-      case 'css':
-        return `
-- Use CSS Grid and Flexbox for layouts
-- Implement CSS custom properties (variables)
-- Add smooth transitions and hover effects
-- Use high-end aesthetics (vibrant gradients, glassmorphism, depth)
-- Make it fully responsive (mobile-first)
-- Use modern CSS features (clamp, min/max, etc.)
-- Include loading states and micro-animations
-        `;
-
-      case 'javascript':
-      case 'js':
-        return `
-- Use modern ES6+ syntax
-- Implement all planned features: ${plan.features.join(', ')}
-- Add proper error handling and validation
-- Include smooth animations and transitions
-- Make it interactive and user-friendly
-- Use async/await for any asynchronous operations
-- Add proper event listeners and cleanup
-        `;
-
-      case 'json':
-        return `
-- Valid JSON format
-- Include all necessary configuration
-- Follow JSON best practices
-        `;
-
-      default:
-        return '- Follow modern development best practices';
-    }
+    const t = type.toLowerCase();
+    if (t === 'html') return 'Semantic HTML5,mobile meta,link styles.css+script.js,accessible.';
+    if (t === 'css') return 'Grid/Flexbox,CSS vars,transitions,gradients,glassmorphism,responsive,animations.';
+    if (t === 'js' || t === 'javascript') return `ES6+,features:${plan.features.join(',')},error handling,async/await,events.`;
+    if (t === 'json') return 'Valid JSON.';
+    return 'Best practices.';
   }
 
   extractCodeFromResponse(content, type) {

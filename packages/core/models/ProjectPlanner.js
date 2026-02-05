@@ -15,38 +15,13 @@ class ProjectPlanner {
     log('\n🧠 AI Processing Context...', 'magenta');
     log('━'.repeat(50), 'dim');
 
-    const planningPrompt = `
-You are Jarvis, an advanced AI software engineer. Analyze the user request: "${projectDescription}"
+    const planningPrompt = `Request: "${projectDescription}"
 
-- If it is a GREETING or GENERAL CONVERSATION:
-  Return JSON: { "intent": "chat", "message": "Your friendly response as Jarvis" }
+If greeting/chat: {"intent":"chat","message":"response"}
 
-- If it is a request to BUILD/CREATE a project/app/tool:
-  Return JSON: { 
-    "intent": "project", 
-    "plan": {
-      "projectName": "kebab-case-name",
-      "description": "Short description",
-      "features": ["feature1", "feature2"],
-      "techStack": ["html", "css", "javascript"],
-      "fileStructure": [
-        {"name": "index.html", "type": "file", "fileType": "html", "description": "Main HTML with semantic structure"},
-        {"name": "styles.css", "type": "file", "fileType": "css", "description": "Modern CSS with variables, gradients, and animations"},
-        {"name": "script.js", "type": "file", "fileType": "javascript", "description": "Clean, modular logic"}
-      ],
-      "dependencies": [],
-      "architecture": "Describe how the UI and logic interact"
-    }
-  }
+If build request: {"intent":"project","plan":{"projectName":"kebab-case","description":"brief","features":["f1","f2"],"techStack":["html","css","javascript"],"fileStructure":[{"name":"index.html","type":"file","fileType":"html","description":"main"},{"name":"styles.css","type":"file","fileType":"css","description":"styles"},{"name":"script.js","type":"file","fileType":"javascript","description":"logic"}],"dependencies":[],"architecture":"brief"}}
 
-- DESIGN GUIDELINES:
-  - Use high-end, premium aesthetics (glassmorphism, vibrant gradients, shadows).
-  - Use Google Fonts (e.g., Inter, Montserrat).
-  - Ensure mobile-first responsiveness.
-  - Add smooth transitions and hover micro-animations.
-
-Return ONLY clean JSON.
-`;
+Design: modern, responsive, gradients, Inter font, animations. JSON only.`;
 
     try {
       let response;

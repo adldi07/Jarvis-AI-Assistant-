@@ -7,24 +7,13 @@ export async function POST(req) {
     try {
         const { feedback, currentFiles, plan, model } = await req.json();
 
-        const prompt = `
-Context: A project named "${plan.projectName}" described as "${plan.description}".
-Current Code Files:
-${Object.entries(currentFiles).map(([path, content]) => `--- FILE: ${path} ---\n${content}\n`).join('\n')}
+        const prompt = `Project:${plan.projectName}
+Files:
+${Object.entries(currentFiles).map(([p, c]) => `[${p}]\n${c}`).join('\n')}
 
-User Feedback: "${feedback}"
+Feedback:"${feedback}"
 
-Task: Update the code files based on the feedback. 
-Respond with only the updated files in a JSON format:
-{
-  "files": {
-     "filename.html": "updated content",
-     ...
-  }
-}
-
-Include ONLY the files that need changes. Return valid JSON only.
-`;
+Return JSON:{"files":{"filename":"updated code"}} Only changed files. JSON only.`;
 
         let response;
         const { claudeApiKey, perplexityApiKey, groqApiKey, openRouterApiKey } = config;
