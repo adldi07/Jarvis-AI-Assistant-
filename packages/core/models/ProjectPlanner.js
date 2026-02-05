@@ -2,8 +2,9 @@ const { callGeminiAPI } = require('../services/geminiService');
 const { callPerplexityAPI } = require('../services/perplexityService');
 const { callOpenRouterAPI } = require('../services/openRouterService');
 const { callGroqAPI } = require('../services/groqService');
+const { callClaudeAPI } = require('../services/claudeService');
 const { log } = require('../utils/logger');
-const { perplexityApiKey, openRouterApiKey, groqApiKey } = require('../config/config');
+const { perplexityApiKey, openRouterApiKey, groqApiKey, claudeApiKey } = require('../config/config');
 
 class ProjectPlanner {
   constructor() {
@@ -51,11 +52,15 @@ Return ONLY clean JSON.
       let response;
 
       // Determine which API to call based on model preference or availability
-      const useGroq = (model === 'groq' || model === 'auto') && groqApiKey;
-      const useOpenRouter = (model === 'openrouter' || (model === 'auto' && !useGroq)) && openRouterApiKey;
-      const usePerplexity = (model === 'perplexity' || (model === 'auto' && !useGroq && !useOpenRouter)) && perplexityApiKey;
+      const useClaude = (model === 'claude' || model === 'claude-3-5') && claudeApiKey;
+      const useGroq = (model === 'groq' || (model === 'auto' && !useClaude)) && groqApiKey;
+      const useOpenRouter = (model === 'openrouter' || (model === 'auto' && !useClaude && !useGroq)) && openRouterApiKey;
+      const usePerplexity = (model === 'perplexity' || (model === 'auto' && !useClaude && !useGroq && !useOpenRouter)) && perplexityApiKey;
 
-      if (useGroq) {
+      if (useClaude) {
+        log('🚀 Using Claude API...', 'cyan');
+        response = await callClaudeAPI(planningPrompt);
+      } else if (useGroq) {
         log('🚀 Using Groq API...', 'cyan');
         response = await callGroqAPI(planningPrompt);
       } else if (useOpenRouter) {

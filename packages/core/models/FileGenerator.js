@@ -1,8 +1,9 @@
 const path = require('path');
 const { callGeminiAPI } = require('../services/geminiService');
 const { callPerplexityAPI } = require('../services/perplexityService');
+const { callClaudeAPI } = require('../services/claudeService');
 const { log, delay, displayProgress } = require('../utils/logger');
-const { API_DELAY, PROJECTS_DIR, perplexityApiKey } = require('../config/config');
+const { API_DELAY, PROJECTS_DIR, perplexityApiKey, claudeApiKey } = require('../config/config');
 
 class FileGenerator {
   constructor(adapter) {
@@ -98,14 +99,20 @@ class FileGenerator {
     let content;
 
     try {
-      // Use Perplexity if key is available, else Gemini
-      content = perplexityApiKey ? await callPerplexityAPI(prompt) : await callGeminiAPI(prompt);
+      // Use Claude if available, then Perplexity, else Gemini
+      if (claudeApiKey) {
+        content = await callClaudeAPI(prompt);
+      } else if (perplexityApiKey) {
+        content = await callPerplexityAPI(prompt);
+      } else {
+        content = await callGeminiAPI(prompt);
+      }
     } catch (error) {
-      log(`⚠️ Perplexity failed for ${fileConfig.name}, falling back to Gemini...`, 'yellow');
+      log(`⚠️ Primary API failed for ${fileConfig.name}, falling back to Gemini...`, 'yellow');
       try {
         content = await callGeminiAPI(prompt);
       } catch (geminiError) {
-        throw new Error(`Both Perplexity and Gemini failed: ${geminiError.message}`);
+        throw new Error(`Primary API and Gemini fallback failed: ${geminiError.message}`);
       }
     }
 

@@ -286,6 +286,7 @@ export default function Dashboard() {
                                     className="appearance-none bg-white/5 border border-white/10 text-[10px] text-gray-300 rounded-lg pl-2 pr-6 py-1 font-mono uppercase focus:outline-none focus:border-blue-500/50 hover:bg-white/10 transition-colors cursor-pointer"
                                 >
                                     <option value="auto">Auto (Best)</option>
+                                    <option value="claude">Claude (Anthropic)</option>
                                     <option value="groq">Groq (Llama 3)</option>
                                     <option value="openrouter">OpenRouter</option>
                                     <option value="perplexity">Perplexity</option>

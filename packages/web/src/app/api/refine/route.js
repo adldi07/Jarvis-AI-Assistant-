@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { callGeminiAPI } from '@jarvis/core';
+import { callGeminiAPI, callClaudeAPI, callPerplexityAPI, callGroqAPI, callOpenRouterAPI, config } from '@jarvis/core';
 
 export const runtime = 'nodejs';
 
 export async function POST(req) {
     try {
-        const { feedback, currentFiles, plan } = await req.json();
+        const { feedback, currentFiles, plan, model } = await req.json();
 
         const prompt = `
 Context: A project named "${plan.projectName}" described as "${plan.description}".
@@ -26,7 +26,21 @@ Respond with only the updated files in a JSON format:
 Include ONLY the files that need changes. Return valid JSON only.
 `;
 
-        const response = await callGeminiAPI(prompt);
+        let response;
+        const { claudeApiKey, perplexityApiKey, groqApiKey, openRouterApiKey } = config;
+
+        if (model === 'claude' && claudeApiKey) {
+            response = await callClaudeAPI(prompt);
+        } else if (model === 'groq' && groqApiKey) {
+            response = await callGroqAPI(prompt);
+        } else if (model === 'openrouter' && openRouterApiKey) {
+            response = await callOpenRouterAPI(prompt);
+        } else if (model === 'perplexity' && perplexityApiKey) {
+            response = await callPerplexityAPI(prompt);
+        } else {
+            response = await callGeminiAPI(prompt);
+        }
+
         const jsonMatch = response.match(/\{[\s\S]*\}/);
 
         if (jsonMatch) {
