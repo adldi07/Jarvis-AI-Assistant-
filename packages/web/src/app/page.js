@@ -18,7 +18,7 @@ export default function Dashboard() {
     const [activeFile, setActiveFile] = useState('index.html');
     const [view, setView] = useState('preview'); // 'preview' or 'code'
     const [previewMode, setPreviewMode] = useState('desktop'); // 'desktop' or 'mobile'
-    const [model, setModel] = useState('auto'); // auto, groq, openrouter, perplexity, gemini
+    const [model, setModel] = useState('openai'); // openai, auto, groq, openrouter, perplexity, gemini, claude
 
     const logsEndRef = useRef(null);
 
@@ -285,6 +285,7 @@ export default function Dashboard() {
                                     onChange={(e) => setModel(e.target.value)}
                                     className="appearance-none bg-white/5 border border-white/10 text-[10px] text-gray-300 rounded-lg pl-2 pr-6 py-1 font-mono uppercase focus:outline-none focus:border-blue-500/50 hover:bg-white/10 transition-colors cursor-pointer"
                                 >
+                                    <option value="openai">ChatGPT (OpenAI)</option>
                                     <option value="auto">Auto (Best)</option>
                                     <option value="claude">Claude (Anthropic)</option>
                                     <option value="groq">Groq (Llama 3)</option>

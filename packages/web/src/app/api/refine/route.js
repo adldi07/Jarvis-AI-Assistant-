@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callGeminiAPI, callClaudeAPI, callPerplexityAPI, callGroqAPI, callOpenRouterAPI, config } from '@jarvis/core';
+import { callGeminiAPI, callClaudeAPI, callPerplexityAPI, callGroqAPI, callOpenRouterAPI, callOpenAIAPI, config } from '@jarvis/core';
 
 export const runtime = 'nodejs';
 
@@ -16,9 +16,12 @@ Feedback:"${feedback}"
 Return JSON:{"files":{"filename":"updated code"}} Only changed files. JSON only.`;
 
         let response;
-        const { claudeApiKey, perplexityApiKey, groqApiKey, openRouterApiKey } = config;
+        const { claudeApiKey, perplexityApiKey, groqApiKey, openRouterApiKey, openaiApiKey } = config;
 
-        if (model === 'claude' && claudeApiKey) {
+        // OpenAI is the default service
+        if ((model === 'openai' || model === 'auto') && openaiApiKey) {
+            response = await callOpenAIAPI(prompt);
+        } else if (model === 'claude' && claudeApiKey) {
             response = await callClaudeAPI(prompt);
         } else if (model === 'groq' && groqApiKey) {
             response = await callGroqAPI(prompt);

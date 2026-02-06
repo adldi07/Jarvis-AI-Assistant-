@@ -2,8 +2,9 @@ const path = require('path');
 const { callGeminiAPI } = require('../services/geminiService');
 const { callPerplexityAPI } = require('../services/perplexityService');
 const { callClaudeAPI } = require('../services/claudeService');
+const { callOpenAIAPI } = require('../services/openaiService');
 const { log, delay, displayProgress } = require('../utils/logger');
-const { API_DELAY, PROJECTS_DIR, perplexityApiKey, claudeApiKey } = require('../config/config');
+const { API_DELAY, PROJECTS_DIR, perplexityApiKey, claudeApiKey, openaiApiKey } = require('../config/config');
 
 class FileGenerator {
   constructor(adapter) {
@@ -99,8 +100,10 @@ class FileGenerator {
     let content;
 
     try {
-      // Use Claude if available, then Perplexity, else Gemini
-      if (claudeApiKey) {
+      // Use OpenAI as primary, then Claude, then Perplexity, else Gemini
+      if (openaiApiKey) {
+        content = await callOpenAIAPI(prompt);
+      } else if (claudeApiKey) {
         content = await callClaudeAPI(prompt);
       } else if (perplexityApiKey) {
         content = await callPerplexityAPI(prompt);

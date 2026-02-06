@@ -6,6 +6,7 @@ const { callPerplexityAPI } = require('./services/perplexityService');
 const { callClaudeAPI } = require('./services/claudeService');
 const { callGroqAPI } = require('./services/groqService');
 const { callOpenRouterAPI } = require('./services/openRouterService');
+const { callOpenAIAPI } = require('./services/openaiService');
 const voiceService = require('./services/voiceService');
 const config = require('./config/config');
 const logger = require('./utils/logger');
@@ -19,6 +20,7 @@ module.exports = {
     callClaudeAPI,
     callGroqAPI,
     callOpenRouterAPI,
+    callOpenAIAPI,
     voiceService,
     config,
     logger,
