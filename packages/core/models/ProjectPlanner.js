@@ -3,8 +3,9 @@ const { callPerplexityAPI } = require('../services/perplexityService');
 const { callOpenRouterAPI } = require('../services/openRouterService');
 const { callGroqAPI } = require('../services/groqService');
 const { callClaudeAPI } = require('../services/claudeService');
+const { callOpenAIAPI } = require('../services/openaiService');
 const { log } = require('../utils/logger');
-const { perplexityApiKey, openRouterApiKey, groqApiKey, claudeApiKey } = require('../config/config');
+const { perplexityApiKey, openRouterApiKey, groqApiKey, claudeApiKey, openaiApiKey } = require('../config/config');
 
 class ProjectPlanner {
   constructor() {
@@ -27,12 +28,16 @@ Design: modern, responsive, gradients, Inter font, animations. JSON only.`;
       let response;
 
       // Determine which API to call based on model preference or availability
+      const useOpenAI = (model === 'openai' || model === 'auto') && openaiApiKey;
       const useClaude = (model === 'claude' || model === 'claude-3-5') && claudeApiKey;
-      const useGroq = (model === 'groq' || (model === 'auto' && !useClaude)) && groqApiKey;
-      const useOpenRouter = (model === 'openrouter' || (model === 'auto' && !useClaude && !useGroq)) && openRouterApiKey;
-      const usePerplexity = (model === 'perplexity' || (model === 'auto' && !useClaude && !useGroq && !useOpenRouter)) && perplexityApiKey;
+      const useGroq = (model === 'groq' || (model === 'auto' && !useOpenAI)) && groqApiKey;
+      const useOpenRouter = (model === 'openrouter' || (model === 'auto' && !useOpenAI && !useClaude && !useGroq)) && openRouterApiKey;
+      const usePerplexity = (model === 'perplexity' || (model === 'auto' && !useOpenAI && !useClaude && !useGroq && !useOpenRouter)) && perplexityApiKey;
 
-      if (useClaude) {
+      if (useOpenAI) {
+        log('🚀 Using OpenAI API...', 'cyan');
+        response = await callOpenAIAPI(planningPrompt);
+      } else if (useClaude) {
         log('🚀 Using Claude API...', 'cyan');
         response = await callClaudeAPI(planningPrompt);
       } else if (useGroq) {

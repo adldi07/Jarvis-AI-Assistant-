@@ -8,6 +8,7 @@ module.exports = {
   openRouterApiKey: (process.env.OPEN_ROUTER_API_KEY || '').trim(),
   groqApiKey: (process.env.GROQ_API_KEY || '').trim(),
   claudeApiKey: (process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '').trim(),
+  openaiApiKey: (process.env.OPEN_AI_API_KEY || '').trim(),
   API_DELAY: 3000, // 3 second delay between API calls for free tier
   MAX_RETRIES: 5,
   GEMINI_DEBOUNCE_MS: 1000, // 1 second debounce window
