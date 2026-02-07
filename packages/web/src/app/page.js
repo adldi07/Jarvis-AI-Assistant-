@@ -116,14 +116,22 @@ export default function Dashboard() {
     };
 
     const getPreviewSource = () => {
-        const findFile = (name) => {
-            const path = Object.keys(files).find(p => p.endsWith(name));
+        // Helper to find file by exact name or fallback to extension-based search
+        const findFile = (exactName, extension) => {
+            // First try exact match
+            let path = Object.keys(files).find(p => p.endsWith(exactName));
+            if (path) return files[path];
+
+            // Fallback: find any file with the given extension
+            path = Object.keys(files).find(p => p.endsWith(extension));
             return path ? files[path] : '';
         };
 
-        const html = findFile('index.html');
-        const css = findFile('styles.css');
-        const js = findFile('script.js');
+        const html = findFile('index.html', '.html');
+        // Try common CSS file names, then fallback to any .css file
+        const css = findFile('styles.css', '.css') || findFile('style.css', '.css') || findFile('main.css', '.css') || findFile('app.css', '.css');
+        // Try common JS file names, then fallback to any .js file  
+        const js = findFile('script.js', '.js') || findFile('main.js', '.js') || findFile('app.js', '.js') || findFile('index.js', '.js');
 
         /* If no index.html, try to find any html file */
         const mainHtml = html || Object.values(files).find(c => c.trim().toLowerCase().startsWith('<!doctype html') || c.trim().toLowerCase().startsWith('<html'));
@@ -132,17 +140,30 @@ export default function Dashboard() {
 
         let injectedHtml = mainHtml;
 
-        // Naive injection for preview
+        // Remove existing external CSS links (they won't work in srcDoc iframe)
+        injectedHtml = injectedHtml.replace(/<link[^>]*rel=["']stylesheet["'][^>]*href=["'][^"']+\.css["'][^>]*\/?>/gi, '');
+        injectedHtml = injectedHtml.replace(/<link[^>]*href=["'][^"']+\.css["'][^>]*rel=["']stylesheet["'][^>]*\/?>/gi, '');
+
+        // Remove existing external script tags (they won't work in srcDoc iframe)
+        injectedHtml = injectedHtml.replace(/<script[^>]*src=["'][^"']+\.js["'][^>]*>[\s\S]*?<\/script>/gi, '');
+
+        // Inject CSS inline in the head
         if (css) {
             if (injectedHtml.includes('</head>')) {
                 injectedHtml = injectedHtml.replace('</head>', `<style>${css}</style></head>`);
+            } else if (injectedHtml.includes('<body')) {
+                injectedHtml = injectedHtml.replace(/<body/i, `<style>${css}</style><body`);
             } else {
-                injectedHtml += `<style>${css}</style>`;
+                injectedHtml = `<style>${css}</style>` + injectedHtml;
             }
         }
+
+        // Inject JS inline before closing body
         if (js) {
             if (injectedHtml.includes('</body>')) {
                 injectedHtml = injectedHtml.replace('</body>', `<script>${js}</script></body>`);
+            } else if (injectedHtml.includes('</html>')) {
+                injectedHtml = injectedHtml.replace('</html>', `<script>${js}</script></html>`);
             } else {
                 injectedHtml += `<script>${js}</script>`;
             }
